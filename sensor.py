@@ -119,9 +119,9 @@ class SensorTag(Peripheral):
 def main():
 
     #Justin
-    #my_sensor = 'f0:f8:f2:86:7b:83'
+    my_sensor = 'f0:f8:f2:86:7b:83'
     #my_sensor = '54:6c:0e:53:3c:ae'
-	my_sensor = '54:6c:0e:53:35:cd'
+	# my_sensor = '54:6c:0e:53:35:cd'
     tag = SensorTag(my_sensor)
     print("Connected to SensorTag", my_sensor)
 
@@ -130,10 +130,10 @@ def main():
     print("Start!!")
     time.sleep(1)
     start = time.time()
-    for i in range(11160):
+    for i in range(3100):
         accelData = tag.accelerometer.read()
         print(accelData)
-        with open("swipeDaryl3.csv","a") as file:
+        with open("Justin_swipe.csv","a") as file:
             fileString = str(accelData)
             file.write(fileString[1:-1])
             file.write('\n')
