@@ -120,6 +120,7 @@ def main():
 
     #Justin
     my_sensor = 'f0:f8:f2:86:7b:83'
+    #others
     #my_sensor = '54:6c:0e:53:3c:ae'
 	# my_sensor = '54:6c:0e:53:35:cd'
     tag = SensorTag(my_sensor)
@@ -132,8 +133,9 @@ def main():
     start = time.time()
     for i in range(3100):
         accelData = tag.accelerometer.read()
-        print(accelData)
-        with open("Justin_swipe.csv","a") as file:
+        # print(accelData)
+        print(i)
+        with open("Justin_crankleft.csv","a") as file:
             fileString = str(accelData)
             file.write(fileString[1:-1])
             file.write('\n')
