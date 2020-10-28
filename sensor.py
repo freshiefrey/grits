@@ -119,10 +119,12 @@ class SensorTag(Peripheral):
 def main():
 
     #Justin
-    my_sensor = 'f0:f8:f2:86:7b:83'
+    #my_sensor = 'f0:f8:f2:86:7b:83'
     #others
     #my_sensor = '54:6c:0e:53:3c:ae'
 	# my_sensor = '54:6c:0e:53:35:cd'
+    ##jeff sn
+    my_sensor = 'f0:f8:f2:86:bb:83'
     tag = SensorTag(my_sensor)
     print("Connected to SensorTag", my_sensor)
 
@@ -135,7 +137,7 @@ def main():
         accelData = tag.accelerometer.read()
         # print(accelData)
         print(i)
-        with open("Justin_crankleft.csv","a") as file:
+        with open("Jeff_pushback.csv","a") as file:
             fileString = str(accelData)
             file.write(fileString[1:-1])
             file.write('\n')
