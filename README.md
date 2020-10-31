@@ -11,6 +11,10 @@ Severe overfitting, need to fine tune
     - remember to change the model name lstm_model so to not overide if u want to keep a good model
 ## Get Started Guide:
 
+### Install additional dependencies
+```python
+pip3 install requirements.txt
+```
 ### Preprocess data
 *Run the notebook window.ipynb*
 - this processes the data and generates output onto your local repo
