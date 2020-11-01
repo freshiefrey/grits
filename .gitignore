@@ -2,7 +2,6 @@ training_data/test.csv
 window.csv
 out.txt
 output.txt
-window.ipynb
 window.csv.zip
 ready_data/*
 numpy-window.txt
