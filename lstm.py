@@ -11,7 +11,9 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.utils import to_categorical
 
-
+import tensorflow as tf
+gpu_devices = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 def load_dataset():
     trainxshape = (53466, 50, 6)
@@ -47,24 +49,33 @@ def load_dataset():
 
     return x_train, y_train, x_test, y_test
 
-def evaluate_model(x_train, y_train, x_test, y_test):
+def evaluate_model(x_train, y_train, x_test, y_test, dropout):
     print("start evaluation!")
-    LR = 0.001
-    verbose, epochs, batch_size = 1, 15, 64
+    LR = 0.0001
+    verbose, epochs, batch_size = 1, 10, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
     model = Sequential()
-    model.add(LSTM(100, input_shape=(n_timesteps, n_features)))
+    model.add(LSTM(100, input_shape=(n_timesteps, n_features), dropout=dropout))
+    # model.add(LSTM(100, return_sequences=True, input_shape=(n_timesteps, n_features), dropout=dropout))
+    # model.add(LSTM(10, return_sequences=True))
+    # model.add(LSTM(64, return_sequences=True))
+    # model.add(LSTM(32, return_sequences=True))
+    # model.add(LSTM(100, dropout=dropout))
     model.add(Dropout(0.5))
     model.add(Dense(100, activation='relu'))
+    # model.add(Dropout(0.3))
+    # model.add(Dense(25, activation='relu'))
     model.add(Dense(n_outputs, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'],)
     # fit network
     kb.set_value(model.optimizer.learning_rate, LR)
+    model.summary()
+
     model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
     # save model
-    model.save('lstm_model2')
+    model.save('lstm_model4')
     # evaluate model
     _, accuracy = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
     return accuracy
@@ -82,10 +93,11 @@ def run_experiment(repeats=1):
     # load data
     x_train, y_train, x_test, y_test = load_dataset()
     # repeat experiment
-
+    dropout = 0.2
+    # dropout = [0.0, 0.2, 0.3, 0.4, 0.5]
     scores = list()
     for r in range(repeats):
-        score = evaluate_model(x_train, y_train, x_test, y_test)
+        score = evaluate_model(x_train, y_train, x_test, y_test, dropout)
         score = score * 100.0
         print('>#%d: %.3f' % (r + 1, score))
         scores.append(score)
