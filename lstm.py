@@ -9,11 +9,15 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers import Dropout
 from keras.layers import LSTM
-from keras.utils import to_categorical
+from keras.layers import ConvLSTM2D
+from keras.optimizers import Adam, SGD, RMSprop
+from keras.utils import to_categorical, np_utils
+from sklearn.preprocessing import LabelEncoder
+import  matplotlib.pyplot as plt
 
 import tensorflow as tf
-gpu_devices = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+# gpu_devices = tf.config.list_physical_devices('GPU')
+# tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 def load_dataset():
     trainxshape = (53466, 50, 6)
@@ -37,22 +41,59 @@ def load_dataset():
     loaded_arr3 = np.loadtxt("ready_data/y_test.txt")
     y_test = loaded_arr3  # .reshape(
     # loaded_arr3.shape[0], loaded_arr3.shape[1])# // testyshape[2], testyshape[2])
-    y_train = to_categorical(y_train)
-    y_test = to_categorical(y_test)
-    # y_train = np.reshape((y_train[0]), 1)
-    # y_test = np.reshape((y_test[0]), 1)
-
+    print('##before reshaping')
     print(x_train.shape)
     print(y_train.shape)
     print(x_test.shape)
     print(y_test.shape)
 
-    return x_train, y_train, x_test, y_test
+    ## Give classes a numerical representation within range:
+    encoder = LabelEncoder()
+    encoder.fit(y_train)
+    encoder.fit(y_test)
+    encoded_ytrain = encoder.transform(y_train)
+    encoded_ytest = encoder.transform(y_test)
 
-def evaluate_model(x_train, y_train, x_test, y_test, dropout):
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_ytrain = np_utils.to_categorical(encoded_ytrain, num_classes=7)
+    dummy_ytest = np_utils.to_categorical(encoded_ytest, num_classes=7)
+
+    # y_train = to_categorical(y_train, num_classes = 7)
+    # y_test = to_categorical(y_test, num_classes = 7)
+    # y_train = np.reshape((y_train[0]), 1)
+    # y_test = np.reshape((y_test[0]), 1)
+
+    print('##After reshaping')
+    print(x_train.shape)
+    print(dummy_ytrain.shape)
+    print(x_test.shape)
+    print(dummy_ytest.shape)
+
+    return x_train, dummy_ytrain, x_test, dummy_ytest
+
+def visualise(history):
+    print(history.history.keys())
+    # summarize history for accuracy
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
+
+def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     print("start evaluation!")
     LR = 0.0001
-    verbose, epochs, batch_size = 1, 10, 64
+    verbose, epochs, batch_size = 1, 50, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
     model = Sequential()
@@ -67,13 +108,17 @@ def evaluate_model(x_train, y_train, x_test, y_test, dropout):
     # model.add(Dropout(0.3))
     # model.add(Dense(25, activation='relu'))
     model.add(Dense(n_outputs, activation='softmax'))
-
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'],)
+    opt = Adam(lr=LR)
+    model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy', tf.keras.metrics.CategoricalAccuracy()])
+    # kb.set_value(model.optimizer.learning_rate, LR)
     # fit network
-    kb.set_value(model.optimizer.learning_rate, LR)
     model.summary()
-
-    model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
+    tf.keras.metrics.CategoricalAccuracy()
+    # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
+    history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose,
+                        validation_data=(x_test, y_test),  shuffle=True)
+    ##plot
+    visualise(history)
     # save model
     model.save('lstm_model4')
     # evaluate model
@@ -97,7 +142,10 @@ def run_experiment(repeats=1):
     # dropout = [0.0, 0.2, 0.3, 0.4, 0.5]
     scores = list()
     for r in range(repeats):
-        score = evaluate_model(x_train, y_train, x_test, y_test, dropout)
+        ## use basic lstm
+        score = evaluate_lstm(x_train, y_train, x_test, y_test, dropout)
+        ##use ConvLSTM
+        # score = evaluate_convlstm(x_train, y_train, x_test, y_test, dropout)
         score = score * 100.0
         print('>#%d: %.3f' % (r + 1, score))
         scores.append(score)
