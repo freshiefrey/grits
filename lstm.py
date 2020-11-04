@@ -11,7 +11,7 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.layers import ConvLSTM2D
 from keras.optimizers import Adam, SGD, RMSprop
-from keras.utils import to_categorical, np_utils
+from keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 import  matplotlib.pyplot as plt
 
@@ -29,47 +29,32 @@ def load_dataset():
     loaded_arr = np.loadtxt("ready_data/x_train.txt")
     x_train = loaded_arr.reshape(
         loaded_arr.shape[0], loaded_arr.shape[1] // trainxshape[2], trainxshape[2])
-    # %%
 
     loaded_arr1 = np.loadtxt("ready_data/y_train.txt")
-    y_train = loaded_arr1  # .reshape(
-    # loaded_arr1.shape[0], trainyshape[1])
+    y_train = loaded_arr1
 
     loaded_arr2 = np.loadtxt("ready_data/x_test.txt")
     x_test = loaded_arr2.reshape(loaded_arr2.shape[0], loaded_arr2.shape[1] // testxshape[2], testxshape[2])
 
     loaded_arr3 = np.loadtxt("ready_data/y_test.txt")
-    y_test = loaded_arr3  # .reshape(
-    # loaded_arr3.shape[0], loaded_arr3.shape[1])# // testyshape[2], testyshape[2])
+    y_test = loaded_arr3
+
     print('##before reshaping')
     print(x_train.shape)
     print(y_train.shape)
     print(x_test.shape)
     print(y_test.shape)
 
-    ## Give classes a numerical representation within range:
-    encoder = LabelEncoder()
-    encoder.fit(y_train)
-    encoder.fit(y_test)
-    encoded_ytrain = encoder.transform(y_train)
-    encoded_ytest = encoder.transform(y_test)
-
-    # convert integers to dummy variables (i.e. one hot encoded)
-    dummy_ytrain = np_utils.to_categorical(encoded_ytrain, num_classes=7)
-    dummy_ytest = np_utils.to_categorical(encoded_ytest, num_classes=7)
-
-    # y_train = to_categorical(y_train, num_classes = 7)
-    # y_test = to_categorical(y_test, num_classes = 7)
-    # y_train = np.reshape((y_train[0]), 1)
-    # y_test = np.reshape((y_test[0]), 1)
+    y_train = to_categorical(y_train, num_classes = 7)
+    y_test = to_categorical(y_test, num_classes = 7)
 
     print('##After reshaping')
     print(x_train.shape)
-    print(dummy_ytrain.shape)
+    print(y_train.shape)
     print(x_test.shape)
-    print(dummy_ytest.shape)
+    print(y_test.shape)
 
-    return x_train, dummy_ytrain, x_test, dummy_ytest
+    return x_train, y_train, x_test, y_test
 
 def visualise(history):
     print(history.history.keys())
