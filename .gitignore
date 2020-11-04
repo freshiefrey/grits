@@ -5,3 +5,5 @@ output.txt
 window.csv.zip
 ready_data/*
 numpy-window.txt
+# output*.csv
+# lstm_model*

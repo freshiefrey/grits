@@ -12,10 +12,12 @@ from keras.layers import LSTM
 from keras.layers import ConvLSTM2D
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.utils import to_categorical
-from sklearn.preprocessing import LabelEncoder
-import  matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 import tensorflow as tf
+'''
+Run for GPU/CUDA ML, comment out if you dont have it configured.
+'''
 # gpu_devices = tf.config.list_physical_devices('GPU')
 # tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
@@ -39,7 +41,7 @@ def load_dataset():
     loaded_arr3 = np.loadtxt("ready_data/y_test.txt")
     y_test = loaded_arr3
 
-    print('##before reshaping')
+    print('##Before reshaping')
     print(x_train.shape)
     print(y_train.shape)
     print(x_test.shape)
