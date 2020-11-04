@@ -22,8 +22,8 @@ import tensorflow as tf
 def load_dataset():
     trainxshape = (53466, 50, 6)
     trainyshape = (53466, 1)
-    testxshape = (22904, 50, 6)
-    testyshape = (22904, 1)
+    testxshape = (22911, 50, 6)
+    testyshape = (22911, 1)
 
     ## Load data previously saved as numpy text and reshape it to orginal form
     loaded_arr = np.loadtxt("ready_data/x_train.txt")
