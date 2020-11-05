@@ -13,6 +13,7 @@ from keras.layers import ConvLSTM2D
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
+import os
 
 import tensorflow as tf
 '''
@@ -30,19 +31,19 @@ window_50_25 = ["ready_data/window-50-25/x_train.txt", "ready_data/window-50-25/
 
 ## 5 gestures, windowsize = 50, overlap = 0
 no_overlap_50 = ["ready_data/no-overlap-50/x_train.txt", "ready_data/no-overlap-50/y_train.txt",
- 				 "ready_data/no-overlap-50/x_test.txt", "ready_data/no-overlap-50/y_test.txt"]
+                  "ready_data/no-overlap-50/x_test.txt", "ready_data/no-overlap-50/y_test.txt"]
 
 ## 5 gestures, windowsize = 100, overlap = 0
 no_overlap_100 = ["ready_data/no-overlap-100/x_train.txt", "ready_data/no-overlap-100/y_train.txt",
-				 "ready_data/no-overlap-100/x_test.txt", "ready_data/no-overlap-100/y_test.txt"]
+                 "ready_data/no-overlap-100/x_test.txt", "ready_data/no-overlap-100/y_test.txt"]
 
 ## 5 gestures, windowsize = 100, overlap = 25
 window_100_25 = ["ready_data/window-100-25/x_train.txt", "ready_data/window-100-25/y_train.txt",
-				 "ready_data/window-100-25/x_test.txt", "ready_data/window-100-25/y_test.txt"]
+                 "ready_data/window-100-25/x_test.txt", "ready_data/window-100-25/y_test.txt"]
 
 ## 5 gestures, windowsize = 100, overlap = 50
 window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-50/y_train.txt",
-				 "ready_data/window-100-50/x_test.txt", "ready_data/window-100-50/y_test.txt"]
+                 "ready_data/window-100-50/x_test.txt", "ready_data/window-100-50/y_test.txt"]
 
 ## 5 gestures, windowsize = 100, overlap = 50
 
@@ -176,8 +177,11 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
                         validation_data=(x_test, y_test),  shuffle=True)
     ##plot
     visualise(history)
+
     # save model
-    model.save('lstm_model_50_25.pb')
+    if not os.path.exists('lstm_models'):
+        os.makedirs('lstm_models')
+    model.save('lstm_models/lstm_model_50_25.pb')
     # evaluate model
     _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
     return accuracy
