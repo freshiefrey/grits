@@ -19,8 +19,8 @@ import tensorflow as tf
 '''
 Run for GPU/CUDA ML, comment out if you dont have it configured.
 '''
-gpu_devices = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+# gpu_devices = tf.config.list_physical_devices('GPU')
+# tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 ## 7 gestures, windowsize = 50, overlap = 25
 dir_list = ["ready_data/x_train.txt", "ready_data/y_train.txt", "ready_data/x_test.txt", "ready_data/y_test.txt"]
