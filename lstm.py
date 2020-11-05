@@ -18,8 +18,8 @@ import tensorflow as tf
 '''
 Run for GPU/CUDA ML, comment out if you dont have it configured.
 '''
-# gpu_devices = tf.config.list_physical_devices('GPU')
-# tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+gpu_devices = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 ## 7 gestures, windowsize = 50, overlap = 25
 dir_list = ["ready_data/x_train.txt", "ready_data/y_train.txt", "ready_data/x_test.txt", "ready_data/y_test.txt"]
@@ -48,8 +48,8 @@ window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-
 
 
 num_gestures = 5
-overlap = 0
-window = 100
+overlap = 25
+window = 50
 def load_dataset():
 
     if num_gestures == 7:
@@ -177,7 +177,7 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     ##plot
     visualise(history)
     # save model
-    model.save('lstm_model1.pb')
+    model.save('lstm_model_50_25.pb')
     # evaluate model
     _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
     return accuracy
