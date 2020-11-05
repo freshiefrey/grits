@@ -51,63 +51,39 @@ window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-
 num_gestures = 5
 overlap = 25
 window = 50
-def load_dataset():
+data_columns = 6
 
+def load_dataset():
     if num_gestures == 7:
-        trainxshape = (53466, 50, 6)
-        trainyshape = (53466, 1)
-        testxshape = (22911, 50, 6)
-        testyshape = (22911, 1)
         directory = dir_list
 
     elif num_gestures == 5:
 
         if overlap == 0 and window == 50:
-            trainxshape = (19095, 50, 6)
-            trainyshape = (19095, 1)
-            testxshape = (8185, 50, 6)
-            testyshape = (8185, 1)
             directory = no_overlap_50
 
         elif overlap == 25 and window == 50:
-            trainxshape = (38190, 50, 6)
-            trainyshape = (38190, 1)
-            testxshape = (16365, 50, 6)
-            testyshape = (16365, 1)
             directory = window_50_25
 
         elif overlap == 0 and window == 100:
-            trainxshape = (9550, 100, 6)
-            trainyshape = (9550, 1)
-            testxshape = (4090, 100, 6)
-            testyshape = (4090, 1)
             directory = no_overlap_100
 
         elif overlap == 25 and window == 100:
-            trainxshape = (12730, 100, 6)
-            trainyshape = (12730, 1)
-            testxshape = (5455, 100, 6)
-            testyshape = (5455, 1)
             directory = window_100_25
 
         elif overlap == 50 and window == 100:
-            trainxshape = (19090, 100, 6)
-            trainyshape = (19090, 1)
-            testxshape = (8185, 100, 6)
-            testyshape = (8185, 1)
             directory = window_100_50
 
 
     ## Load data previously saved as numpy text and reshape it to orginal form
     loaded_arr = np.loadtxt(directory[0])
-    x_train = loaded_arr.reshape(
-        loaded_arr.shape[0], loaded_arr.shape[1] // trainxshape[2], trainxshape[2])
+    x_train = loaded_arr.reshape(loaded_arr.shape[0], loaded_arr.shape[1] // data_columns, data_columns)
 
     loaded_arr1 = np.loadtxt(directory[1])
     y_train = loaded_arr1
 
     loaded_arr2 = np.loadtxt(directory[2])
-    x_test = loaded_arr2.reshape(loaded_arr2.shape[0], loaded_arr2.shape[1] // testxshape[2], testxshape[2])
+    x_test = loaded_arr2.reshape(loaded_arr2.shape[0], loaded_arr2.shape[1] // data_columns, data_columns)
 
     loaded_arr3 = np.loadtxt(directory[3])
     y_test = loaded_arr3
@@ -181,7 +157,8 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # save model
     if not os.path.exists('lstm_models'):
         os.makedirs('lstm_models')
-    model.save('lstm_models/lstm_model_50_25.pb')
+    model_name = 'lstm_models/lstm_model_test_' + str(window) + '_' + str(overlap)
+    model.save(model_name)
     # evaluate model
     _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
     return accuracy
