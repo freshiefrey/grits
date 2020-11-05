@@ -1,9 +1,11 @@
-training_data/test.csv
+raw_data/test.csv
 window.csv
 out.txt
 output.txt
 window.csv.zip
 ready_data/*
 numpy-window.txt
+ready_data/window-100/*
+ready_data/no-overlap/*
 # output*.csv
 # lstm_model*

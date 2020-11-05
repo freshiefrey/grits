@@ -21,24 +21,60 @@ Run for GPU/CUDA ML, comment out if you dont have it configured.
 # gpu_devices = tf.config.list_physical_devices('GPU')
 # tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
+## 7 gestures, windowsize = 50, overlap = 25
+## 5 gestures, windowsize = 50, overlap = 25
+dir_list = ["ready_data/x_train.txt", "ready_data/y_train.txt", "ready_data/x_test.txt", "ready_data/y_test.txt"]
+## 5 gestures, windowsize = 50, overlap = 0
+no_overlap = ["ready_data/no-overlap/x_train.txt", "ready_data/no-overlap/y_train.txt", "ready_data/no-overlap/x_test.txt", "ready_data/no-overlap/y_test.txt"]
+no_overlap = ["ready_data/window-100/x_train.txt", "ready_data/window-100/y_train.txt", "ready_data/window-100/x_test.txt", "ready_data/window-100/y_test.txt"]
+
+## 5 gestures, windowsize = 100, overlap = 50
+
+
+num_gestures = 5
+overlap = 0
+window = 100
 def load_dataset():
-    trainxshape = (53466, 50, 6)
-    trainyshape = (53466, 1)
-    testxshape = (22911, 50, 6)
-    testyshape = (22911, 1)
+
+    if num_gestures == 7:
+        trainxshape = (53466, 50, 6)
+        trainyshape = (53466, 1)
+        testxshape = (22911, 50, 6)
+        testyshape = (22911, 1)
+        directory = dir_list
+    elif num_gestures == 5:
+        if overlap == 0:
+            trainxshape = (38190, 50, 6)
+            trainyshape = (38190, 1)
+            testxshape = (16365, 50, 6)
+            testyshape = (16365, 1)
+            directory = no_overlap
+
+        elif overlap == 25 and window==100:
+            trainxshape = (12730, 50, 6)
+            trainyshape = (12730, 1)
+            testxshape = (5455, 50, 6)
+            testyshape = (5455, 1)
+            directory = no_overlap
+        else:
+            trainxshape = (19095, 50, 6)
+            trainyshape = (19095, 1)
+            testxshape = (8185, 50, 6)
+            testyshape = (8185, 1)
+            directory = dir_list
 
     ## Load data previously saved as numpy text and reshape it to orginal form
-    loaded_arr = np.loadtxt("ready_data/x_train.txt")
+    loaded_arr = np.loadtxt(directory[0])
     x_train = loaded_arr.reshape(
         loaded_arr.shape[0], loaded_arr.shape[1] // trainxshape[2], trainxshape[2])
 
-    loaded_arr1 = np.loadtxt("ready_data/y_train.txt")
+    loaded_arr1 = np.loadtxt(directory[1])
     y_train = loaded_arr1
 
-    loaded_arr2 = np.loadtxt("ready_data/x_test.txt")
+    loaded_arr2 = np.loadtxt(directory[2])
     x_test = loaded_arr2.reshape(loaded_arr2.shape[0], loaded_arr2.shape[1] // testxshape[2], testxshape[2])
 
-    loaded_arr3 = np.loadtxt("ready_data/y_test.txt")
+    loaded_arr3 = np.loadtxt(directory[3])
     y_test = loaded_arr3
 
     print('##Before reshaping')
@@ -47,8 +83,8 @@ def load_dataset():
     print(x_test.shape)
     print(y_test.shape)
 
-    y_train = to_categorical(y_train, num_classes = 7)
-    y_test = to_categorical(y_test, num_classes = 7)
+    y_train = to_categorical(y_train, num_classes = num_gestures)
+    y_test = to_categorical(y_test, num_classes = num_gestures)
 
     print('##After reshaping')
     print(x_train.shape)
@@ -80,7 +116,7 @@ def visualise(history):
 def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     print("start evaluation!")
     LR = 0.0001
-    verbose, epochs, batch_size = 1, 50, 64
+    verbose, epochs, batch_size = 1, 20, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
     model = Sequential()
@@ -90,7 +126,7 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # model.add(LSTM(64, return_sequences=True))
     # model.add(LSTM(32, return_sequences=True))
     # model.add(LSTM(100, dropout=dropout))
-    model.add(Dropout(0.5))
+    model.add(Dropout(dropout))
     model.add(Dense(100, activation='relu'))
     # model.add(Dropout(0.3))
     # model.add(Dense(25, activation='relu'))
@@ -100,16 +136,16 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # kb.set_value(model.optimizer.learning_rate, LR)
     # fit network
     model.summary()
-    tf.keras.metrics.CategoricalAccuracy()
+    # tf.keras.metrics.CategoricalAccuracy()
     # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose,
                         validation_data=(x_test, y_test),  shuffle=True)
     ##plot
     visualise(history)
     # save model
-    model.save('lstm_model4')
+    model.save('lstm_model1.pb')
     # evaluate model
-    _, accuracy = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
+    _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
     return accuracy
 
 
