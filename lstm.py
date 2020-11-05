@@ -22,11 +22,27 @@ Run for GPU/CUDA ML, comment out if you dont have it configured.
 # tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 ## 7 gestures, windowsize = 50, overlap = 25
-## 5 gestures, windowsize = 50, overlap = 25
 dir_list = ["ready_data/x_train.txt", "ready_data/y_train.txt", "ready_data/x_test.txt", "ready_data/y_test.txt"]
+
+## 5 gestures, windowsize = 50, overlap = 25
+window_50_25 = ["ready_data/window-50-25/x_train.txt", "ready_data/window-50-25/y_train.txt",
+                 "ready_data/window-50-25/x_test.txt", "ready_data/window-50-25/y_test.txt"]
+
 ## 5 gestures, windowsize = 50, overlap = 0
-no_overlap = ["ready_data/no-overlap/x_train.txt", "ready_data/no-overlap/y_train.txt", "ready_data/no-overlap/x_test.txt", "ready_data/no-overlap/y_test.txt"]
-no_overlap = ["ready_data/window-100/x_train.txt", "ready_data/window-100/y_train.txt", "ready_data/window-100/x_test.txt", "ready_data/window-100/y_test.txt"]
+no_overlap_50 = ["ready_data/no-overlap-50/x_train.txt", "ready_data/no-overlap-50/y_train.txt",
+ 				 "ready_data/no-overlap-50/x_test.txt", "ready_data/no-overlap-50/y_test.txt"]
+
+## 5 gestures, windowsize = 100, overlap = 0
+no_overlap_100 = ["ready_data/no-overlap-100/x_train.txt", "ready_data/no-overlap-100/y_train.txt",
+				 "ready_data/no-overlap-100/x_test.txt", "ready_data/no-overlap-100/y_test.txt"]
+
+## 5 gestures, windowsize = 100, overlap = 25
+window_100_25 = ["ready_data/window-100-25/x_train.txt", "ready_data/window-100-25/y_train.txt",
+				 "ready_data/window-100-25/x_test.txt", "ready_data/window-100-25/y_test.txt"]
+
+## 5 gestures, windowsize = 100, overlap = 50
+window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-50/y_train.txt",
+				 "ready_data/window-100-50/x_test.txt", "ready_data/window-100-50/y_test.txt"]
 
 ## 5 gestures, windowsize = 100, overlap = 50
 
@@ -42,26 +58,44 @@ def load_dataset():
         testxshape = (22911, 50, 6)
         testyshape = (22911, 1)
         directory = dir_list
-    elif num_gestures == 5:
-        if overlap == 0:
-            trainxshape = (38190, 50, 6)
-            trainyshape = (38190, 1)
-            testxshape = (16365, 50, 6)
-            testyshape = (16365, 1)
-            directory = no_overlap
 
-        elif overlap == 25 and window==100:
-            trainxshape = (12730, 50, 6)
-            trainyshape = (12730, 1)
-            testxshape = (5455, 50, 6)
-            testyshape = (5455, 1)
-            directory = no_overlap
-        else:
+    elif num_gestures == 5:
+
+        if overlap == 0 and window == 50:
             trainxshape = (19095, 50, 6)
             trainyshape = (19095, 1)
             testxshape = (8185, 50, 6)
             testyshape = (8185, 1)
-            directory = dir_list
+            directory = no_overlap_50
+
+        elif overlap == 25 and window == 50:
+            trainxshape = (38190, 50, 6)
+            trainyshape = (38190, 1)
+            testxshape = (16365, 50, 6)
+            testyshape = (16365, 1)
+            directory = window_50_25
+
+        elif overlap == 0 and window == 100:
+            trainxshape = (9550, 100, 6)
+            trainyshape = (9550, 1)
+            testxshape = (4090, 100, 6)
+            testyshape = (4090, 1)
+            directory = no_overlap_100
+
+        elif overlap == 25 and window == 100:
+            trainxshape = (12730, 100, 6)
+            trainyshape = (12730, 1)
+            testxshape = (5455, 100, 6)
+            testyshape = (5455, 1)
+            directory = window_100_25
+
+        elif overlap == 50 and window == 100:
+            trainxshape = (19090, 100, 6)
+            trainyshape = (19090, 1)
+            testxshape = (8185, 100, 6)
+            testyshape = (8185, 1)
+            directory = window_100_50
+
 
     ## Load data previously saved as numpy text and reshape it to orginal form
     loaded_arr = np.loadtxt(directory[0])
