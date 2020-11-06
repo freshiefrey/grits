@@ -109,45 +109,95 @@ class HumiditySensorHDC1000(SensorBase):
         RH = 100.0 * (rawH/65536.0)
         return (temp, RH)
 
+class KeypressSensor(SensorBase):
+    svcUUID = UUID(0xFFE0)
+    dataUUID = UUID(0xFFE1)
+    ctrlUUID = None
+    sensorOn = None
+
+    def __init__(self, periph):
+        SensorBase.__init__(self, periph)
+ 
+    def enable(self):
+        SensorBase.enable(self)
+        self.char_descr = self.service.getDescriptors(forUUID=0x2902)[0]
+        self.char_descr.write(struct.pack('<bb', 0x01, 0x00), True)
+
+    def disable(self):
+        self.char_descr.write(struct.pack('<bb', 0x00, 0x00), True)
+
+class KeypressDelegate(DefaultDelegate):
+    BUTTON_L = 0x02
+    BUTTON_R = 0x01
+    ALL_BUTTONS = (BUTTON_L | BUTTON_R)
+
+    _button_desc = { 
+        BUTTON_L : "Left button",
+        BUTTON_R : "Right button",
+        ALL_BUTTONS : "Both buttons"
+    } 
+
+    def __init__(self):
+        DefaultDelegate.__init__(self)
+        self.lastVal = 0
+
+    def handleNotification(self, hnd, data):
+        # NB: only one source of notifications at present
+        # so we can ignore 'hnd'.
+        val = struct.unpack("B", data)[0]
+        down = (val & ~self.lastVal) & self.ALL_BUTTONS
+        if down != 0:
+            self.onButtonDown(down)
+        up = (~val & self.lastVal) & self.ALL_BUTTONS
+        if up != 0:
+            self.onButtonUp(up)
+        self.lastVal = val
+
+    def onButtonUp(self, but):
+        print ( "** " + self._button_desc[but] + " UP")
+
+    def onButtonDown(self, but):
+        print ( "** " + self._button_desc[but] + " DOWN")
+
 class SensorTag(Peripheral):
     def __init__(self,addr,version=AUTODETECT):
         Peripheral.__init__(self,addr)
         self._mpu9250 = MovementSensorMPU9250(self)
         self.accelerometer = AccelerometerSensorMPU9250(self._mpu9250)
         self.humidity = HumiditySensorHDC1000(self)
+        self.keypress = KeypressSensor(self)
      
 def main():
 
     #Justin
     #my_sensor = 'f0:f8:f2:86:7b:83'
-    #Mervin
-    my_sensor = '54:6c:0e:53:3c:ae'
-    #YX
+    #others
+    #my_sensor = '54:6c:0e:53:3c:ae'
 	# my_sensor = '54:6c:0e:53:35:cd'
     ##jeff sn
     # my_sensor = 'f0:f8:f2:86:bb:83'
+    No_of_samples = 2
     tag = SensorTag(my_sensor)
     print("Connected to SensorTag", my_sensor)
-
     tag.accelerometer.enable()
-    time.sleep(1.5)
+    accelData_list = []
+    time.sleep(1)
     print("Start!!")
     time.sleep(1)
+
     start = time.time()
-    for i in range(100):
+    for i in range(No_of_samples*50):
         accelData = tag.accelerometer.read()
         # print(accelData)
         print(i)
-        with open("temp_testing_sample4.csv","a") as file:
-            fileString = str(accelData)
-            file.write(fileString[1:-1])
-            file.write('\n')
-        file.close()
-  
+        accelData_list.append(accelData)
     end = time.time()
-    print(end - start)
+    print("Recording Complete!")
+    print("Time taken: %ds", end - start)
     tag.accelerometer.disable()
     tag.disconnect()
+
+    return accelData_list
 
 if __name__ == "__main__":
     main()
