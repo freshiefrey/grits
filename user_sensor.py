@@ -1,15 +1,25 @@
 from bluepy.btle import UUID, Peripheral, DefaultDelegate, AssignedNumbers
+import paho.mqtt.client as mqtt
 import struct
 import math
 import time
+from tqdm import tqdm
 
 def _TI_UUID(val):
     return UUID("%08X-0451-4000-b000-000000000000" % (0xF0000000+val))
+
+URL = "127.0.0.1" #change to cloud IP
+SENSOR = "GRITS/Sensor"
+MOTION = "GRITS/Motion_Data"
+GESTURE = "GRITS/Gesture"
 
 # Sensortag versions
 AUTODETECT = "-"
 SENSORTAG_V1 = "v1"
 SENSORTAG_2650 = "CC2650"
+
+#global params
+btn = 0
 
 class SensorBase:
     # Derived classes should set: svcUUID, ctrlUUID, dataUUID
@@ -126,6 +136,14 @@ class KeypressSensor(SensorBase):
     def disable(self):
         self.char_descr.write(struct.pack('<bb', 0x00, 0x00), True)
 
+class SensorTag(Peripheral):
+    def __init__(self,addr,version=AUTODETECT):
+        Peripheral.__init__(self,addr)
+        self._mpu9250 = MovementSensorMPU9250(self)
+        self.accelerometer = AccelerometerSensorMPU9250(self._mpu9250)
+        self.humidity = HumiditySensorHDC1000(self)
+        self.keypress = KeypressSensor(self)
+
 class KeypressDelegate(DefaultDelegate):
     BUTTON_L = 0x02
     BUTTON_R = 0x01
@@ -140,6 +158,7 @@ class KeypressDelegate(DefaultDelegate):
     def __init__(self):
         DefaultDelegate.__init__(self)
         self.lastVal = 0
+        self.left_btn = 0
 
     def handleNotification(self, hnd, data):
         # NB: only one source of notifications at present
@@ -154,50 +173,87 @@ class KeypressDelegate(DefaultDelegate):
         self.lastVal = val
 
     def onButtonUp(self, but):
-        print ( "** " + self._button_desc[but] + " UP")
+        global btn
+        # print(but)
+        # print (self._button_desc[but] + " UP")
+        btn = but
+        # print (btn)
 
     def onButtonDown(self, but):
-        print ( "** " + self._button_desc[but] + " DOWN")
+        # global btn
+        # print (self._button_desc[but] + " DOWN")
+        # btn = 1
+        # print(btn)
+        pass
+    
+def on_connect(client,userdata,flags,rc):
+    if rc == 0:
+		print("Connected with result code " + str(rc))
+		client.subscribe(GESTURE,1)
+	else:
+		print("Failed to connect. Error code %d." % rc)
 
-class SensorTag(Peripheral):
-    def __init__(self,addr,version=AUTODETECT):
-        Peripheral.__init__(self,addr)
-        self._mpu9250 = MovementSensorMPU9250(self)
-        self.accelerometer = AccelerometerSensorMPU9250(self._mpu9250)
-        self.humidity = HumiditySensorHDC1000(self)
-        self.keypress = KeypressSensor(self)
-     
+def on_message(client,data,msg):
+	print("Message Received")
+
+def setup(hostname):
+	client = mqtt.Client()
+	client.on_connect = on_connect
+	client.on_message = on_message
+    print("Connecting...")
+	client.connect(hostname)
+	client.loop_start()
+	return client
+
+def send_data(client, data):
+	client.publish(MOTION, json.dumps(data))
+	print("Motion data published!" )
+
 def main():
+    ###SETUP###
+    #TAG ADDRESSES
+    Justin = 'f0:f8:f2:86:7b:83'
+    Mervin = '54:6c:0e:53:3c:ae'
+	Yi_Xiang = '54:6c:0e:53:35:cd'
+    Jeffrey = 'f0:f8:f2:86:bb:83'
 
-    #Justin
-    #my_sensor = 'f0:f8:f2:86:7b:83'
-    #others
-    #my_sensor = '54:6c:0e:53:3c:ae'
-	# my_sensor = '54:6c:0e:53:35:cd'
-    ##jeff sn
-    # my_sensor = 'f0:f8:f2:86:bb:83'
+    #PARAMS
+    my_sensor = Justin
     No_of_samples = 2
+    global btn
+    right_btn = 1
+    # left_btn = 2
+
+    #INITIALIZE
     tag = SensorTag(my_sensor)
     print("Connected to SensorTag", my_sensor)
-    tag.accelerometer.enable()
-    accelData_list = []
-    time.sleep(1)
-    print("Start!!")
-    time.sleep(1)
-
-    start = time.time()
-    for i in range(No_of_samples*50):
-        accelData = tag.accelerometer.read()
-        # print(accelData)
-        print(i)
-        accelData_list.append(accelData)
-    end = time.time()
-    print("Recording Complete!")
-    print("Time taken: %ds", end - start)
-    tag.accelerometer.disable()
-    tag.disconnect()
-
-    return accelData_list
+    tag.keypress.enable()
+    tag.setDelegate(KeypressDelegate())
+    while(1):
+        tag.waitForNotifications(5)
+        if btn==right_btn:
+            print("btn pressed")
+            tag.accelerometer.enable()
+            accelData_list = []
+            time.sleep(1)
+            print("Start!!")
+            time.sleep(1)
+            start = time.time()
+            for i in tqdm(range(No_of_samples*50),desc="Recording..."):
+                accelData = tag.accelerometer.read()
+                accelData_list.append(accelData)
+            end = time.time()
+            print("Recording Complete!")
+            print("Time taken: %.3fs" % (end - start))
+            tag.accelerometer.disable()
+            btn = 0
+            # tag.disconnect()
+            # print(accelData_list)
+            client = setup(URL)
+            send_data(client, accelData_list)
+            client.loop_stop()
+            client.disconnect()
+            print("waiting for btn press")
 
 if __name__ == "__main__":
     main()
