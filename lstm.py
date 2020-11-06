@@ -19,8 +19,8 @@ import tensorflow as tf
 '''
 Run for GPU/CUDA ML, comment out if you dont have it configured.
 '''
-# gpu_devices = tf.config.list_physical_devices('GPU')
-# tf.config.experimental.set_memory_growth(gpu_devices[0], True)
+gpu_devices = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpu_devices[0], True)
 
 ## 7 gestures, windowsize = 50, overlap = 25
 dir_list = ["ready_data/x_train.txt", "ready_data/y_train.txt", "ready_data/x_test.txt", "ready_data/y_test.txt"]
@@ -48,7 +48,7 @@ window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-
 ## 5 gestures, windowsize = 100, overlap = 50
 
 
-num_gestures = 5
+num_gestures = 4
 overlap = 50
 window = 100
 data_columns = 6
@@ -57,7 +57,7 @@ def load_dataset():
     if num_gestures == 7:
         directory = dir_list
 
-    elif num_gestures == 5:
+    elif num_gestures == 4 or num_gestures == 5:
 
         if overlap == 0 and window == 50:
             directory = no_overlap_50
@@ -127,7 +127,7 @@ def visualise(history):
 def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     print("start evaluation!")
     LR = 0.0001
-    verbose, epochs, batch_size = 1, 10, 64
+    verbose, epochs, batch_size = 1, 20, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
 
@@ -166,7 +166,7 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # save model
     if not os.path.exists('lstm_models'):
         os.makedirs('lstm_models')
-    model_name = 'lstm_models/lstm_model_test' + str(window) + '_' + str(overlap)
+    model_name = 'lstm_models/lstm_model_' + str(window) + '_' + str(overlap)
     model.save(model_name)
     # evaluate model
     _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
@@ -185,7 +185,7 @@ def run_experiment(repeats=1):
     # load data
     x_train, y_train, x_test, y_test = load_dataset()
     # repeat experiment
-    dropout = 0.5
+    dropout = 0.2
     # dropout = [0.0, 0.2, 0.3, 0.4, 0.5]
     scores = list()
     for r in range(repeats):
