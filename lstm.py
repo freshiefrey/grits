@@ -49,8 +49,8 @@ window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-
 
 
 num_gestures = 5
-overlap = 25
-window = 50
+overlap = 50
+window = 100
 data_columns = 6
 
 def load_dataset():
@@ -127,9 +127,10 @@ def visualise(history):
 def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     print("start evaluation!")
     LR = 0.0001
-    verbose, epochs, batch_size = 1, 20, 64
+    verbose, epochs, batch_size = 1, 10, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
+
     model = Sequential()
     model.add(LSTM(100, input_shape=(n_timesteps, n_features), dropout=dropout))
     # model.add(LSTM(100, return_sequences=True, input_shape=(n_timesteps, n_features), dropout=dropout))
@@ -137,7 +138,15 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # model.add(LSTM(64, return_sequences=True))
     # model.add(LSTM(32, return_sequences=True))
     # model.add(LSTM(100, dropout=dropout))
+
+    ## Uncomment below and comment out lstm to use Convolution LSTM
+    # n_steps, n_length = 4, 25
+    # x_train = x_train.reshape((x_train.shape[0], n_steps, 1, n_length, n_features))
+    # x_test = x_test.reshape((x_test.shape[0], n_steps, 1, n_length, n_features))
+    # model.add(ConvLSTM2D(filters=32, kernel_size=(1, 3), activation='relu',
+                         # input_shape=(n_steps, 1, n_length, n_features)))
     model.add(Dropout(dropout))
+    # model.add(Flatten())
     model.add(Dense(100, activation='relu'))
     # model.add(Dropout(0.3))
     # model.add(Dense(25, activation='relu'))
@@ -157,7 +166,7 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     # save model
     if not os.path.exists('lstm_models'):
         os.makedirs('lstm_models')
-    model_name = 'lstm_models/lstm_model_test_' + str(window) + '_' + str(overlap)
+    model_name = 'lstm_models/lstm_model_test' + str(window) + '_' + str(overlap)
     model.save(model_name)
     # evaluate model
     _, accuracy, cat_acc = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
@@ -176,7 +185,7 @@ def run_experiment(repeats=1):
     # load data
     x_train, y_train, x_test, y_test = load_dataset()
     # repeat experiment
-    dropout = 0.2
+    dropout = 0.5
     # dropout = [0.0, 0.2, 0.3, 0.4, 0.5]
     scores = list()
     for r in range(repeats):
