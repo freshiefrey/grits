@@ -1,14 +1,16 @@
 # grits
 Gesture Recognition Integrated System
 
-## Current best:
+## Current best: [W = 100, overlap = 50]
 - Training_acc = 0.9933
-- Test_acc = 0.626
-Severe overfitting, need to fine tune
+- Test_acc = 0.96762
 
 ## TODO:
-- TUNE Hyper parameters in the files
-    - remember to change the model name lstm_model so to not overide if u want to keep a good model
+- Check if MQTT brokers work correctly, if model predicts correctly, and time taken for result to return.
+- Setup Cloud server to run paho-MQTT and above brokers with model.
+- Test full chain
+
+
 ## Get Started Guide:
 
 ### Install additional dependencies
