@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.python.keras.backend import set_session
 import numpy as np
 
-MODEL_NAME = '../../lstm_models/lstm_model_100_50_96%'
+MODEL_NAME = '/home/joust/grits/lstm_models/lstm_model_100_50_96%'
 
 URL = "127.0.0.1" #change to cloud IP
 SENSOR = "GRITS/Sensor"
@@ -36,7 +36,7 @@ def classify_gesture(data):
 	with session.graph.as_default():
 		set_session(session)
 		prediction = model.predict(data)
-		index = np.argmax(result)
+		index = np.argmax(prediction)
 	print("Done.")
 	return classes[index]
 
