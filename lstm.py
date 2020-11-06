@@ -49,8 +49,8 @@ window_100_50 = ["ready_data/window-100-50/x_train.txt", "ready_data/window-100-
 
 
 num_gestures = 4
-overlap = 50
-window = 100
+overlap = 25
+window = 50
 data_columns = 6
 
 def load_dataset():
