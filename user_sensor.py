@@ -4,6 +4,7 @@ import struct
 import math
 import time
 from tqdm import tqdm
+import json
 
 def _TI_UUID(val):
     return UUID("%08X-0451-4000-b000-000000000000" % (0xF0000000+val))
@@ -188,33 +189,40 @@ class KeypressDelegate(DefaultDelegate):
     
 def on_connect(client,userdata,flags,rc):
     if rc == 0:
-		print("Connected with result code " + str(rc))
-		client.subscribe(GESTURE,1)
-	else:
-		print("Failed to connect. Error code %d." % rc)
+	    print("Connected with result code " + str(rc))
+	    client.subscribe(GESTURE,1)
+    else:
+	    print("Failed to connect. Error code %d." % rc)
 
 def on_message(client,data,msg):
 	print("Message Received")
 
 def setup(hostname):
-	client = mqtt.Client()
-	client.on_connect = on_connect
-	client.on_message = on_message
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
     print("Connecting...")
-	client.connect(hostname)
-	client.loop_start()
-	return client
+    client.connect(hostname)
+    client.loop_start()
+    return client
 
 def send_data(client, data):
-	client.publish(MOTION, json.dumps(data))
-	print("Motion data published!" )
+    mqtt_data = json.dumps(data)
+    client.publish(MOTION, mqtt_data)
+    complete_msg = "Motion data published!"
+    client.publish(MOTION, complete_msg)
+    print(complete_msg)
+    dim1 = len(data)
+    dim2 = len(data[0])
+    dim3 = len(data[0][0])
+    print("shape of data before json: %d %d %d" % (dim1, dim2,dim3))
 
 def main():
     ###SETUP###
     #TAG ADDRESSES
     Justin = 'f0:f8:f2:86:7b:83'
     Mervin = '54:6c:0e:53:3c:ae'
-	Yi_Xiang = '54:6c:0e:53:35:cd'
+    Yi_Xiang = '54:6c:0e:53:35:cd'
     Jeffrey = 'f0:f8:f2:86:bb:83'
 
     #PARAMS
@@ -250,7 +258,7 @@ def main():
             # tag.disconnect()
             # print(accelData_list)
             client = setup(URL)
-            send_data(client, accelData_list)
+            send_data(client, [accelData_list])
             client.loop_stop()
             client.disconnect()
             print("waiting for btn press")
