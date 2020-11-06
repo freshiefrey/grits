@@ -210,7 +210,7 @@ def send_data(client, data):
     mqtt_data = json.dumps(data)
     client.publish(MOTION, mqtt_data)
     complete_msg = "Motion data published!"
-    client.publish(MOTION, complete_msg)
+    # client.publish(MOTION, complete_msg)
     print(complete_msg)
     dim1 = len(data)
     dim2 = len(data[0])
