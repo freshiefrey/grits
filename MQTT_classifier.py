@@ -14,6 +14,8 @@ URL = "54.255.221.131"
 SENSOR = "GRITS/Sensor"
 MOTION = "GRITS/Motion_Data"
 GESTURE = "GRITS/Gesture"
+USERID = "Daryl"
+PASSWORD = "wmk9199"
 classes = ["Buddha clap", "Knob", "Pushback", "Swipe"]
 
 
@@ -56,6 +58,7 @@ def on_message(client, userdata, msg):
 
 def setup(hostname):
 	client = mqtt.Client()
+	client.username_pw_set(USERID, PASSWORD)  # AUTHENTICATE
 	client.on_connect = on_connect
 	client.on_message = on_message
 	client.connect(hostname)
