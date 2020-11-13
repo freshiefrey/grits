@@ -228,7 +228,7 @@ def main():
 
     #PARAMS
     my_sensor = Justin
-    No_of_samples = 2
+    No_of_samples = 2 ## currently for window size of 100, 1 sample = 50Hz
     global btn
     right_btn = 1
     # left_btn = 2
