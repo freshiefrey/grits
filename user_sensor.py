@@ -9,7 +9,7 @@ import json
 def _TI_UUID(val):
     return UUID("%08X-0451-4000-b000-000000000000" % (0xF0000000+val))
 
-URL = "127.0.0.1" #change to cloud IP
+URL = "54.255.221.131" #change to cloud IP
 SENSOR = "GRITS/Sensor"
 MOTION = "GRITS/Motion_Data"
 GESTURE = "GRITS/Gesture"
@@ -199,6 +199,7 @@ def on_message(client,data,msg):
 
 def setup(hostname):
     client = mqtt.Client()
+	client.username_pw_set(username = "Daryl", password = "wmk9199")
     client.on_connect = on_connect
     client.on_message = on_message
     print("Connecting...")
