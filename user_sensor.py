@@ -49,7 +49,7 @@ class SensorBase:
     def disable(self):
         if self.ctrl is not None:
             self.ctrl.write(self.sensorOff)
-	
+    
 
 class MovementSensorMPU9250(SensorBase):
     svcUUID  = _TI_UUID(0xAA80)
@@ -189,17 +189,17 @@ class KeypressDelegate(DefaultDelegate):
     
 def on_connect(client,userdata,flags,rc):
     if rc == 0:
-	    print("Connected with result code " + str(rc))
-	    client.subscribe(GESTURE,1)
+        print("Connected with result code " + str(rc))
+        client.subscribe(GESTURE,1)
     else:
-	    print("Failed to connect. Error code %d." % rc)
+        print("Failed to connect. Error code %d." % rc)
 
 def on_message(client,data,msg):
-	print("Message Received")
+    print("Message Received")
 
 def setup(hostname):
     client = mqtt.Client()
-	client.username_pw_set(username = "Daryl", password = "wmk9199")
+    client.username_pw_set(username = "Daryl", password = "wmk9199")
     client.on_connect = on_connect
     client.on_message = on_message
     print("Connecting...")
@@ -227,8 +227,13 @@ def main():
     Jeffrey = 'f0:f8:f2:86:bb:83'
 
     #PARAMS
+<<<<<<< HEAD
+    my_sensor = Jeffrey
+    No_of_samples = 2
+=======
     my_sensor = Justin
     No_of_samples = 2 ## currently for window size of 100, 1 sample = 50Hz
+>>>>>>> 1741c04d8200d54926f96a9f07725bf219200966
     global btn
     right_btn = 1
     # left_btn = 2
@@ -239,30 +244,37 @@ def main():
     tag.keypress.enable()
     tag.setDelegate(KeypressDelegate())
     while(1):
-        tag.waitForNotifications(5)
-        if btn==right_btn:
-            print("btn pressed")
-            tag.accelerometer.enable()
-            accelData_list = []
-            time.sleep(1)
-            print("Start!!")
-            time.sleep(1)
-            start = time.time()
-            for i in tqdm(range(No_of_samples*50),desc="Recording..."):
-                accelData = tag.accelerometer.read()
-                accelData_list.append(accelData)
-            end = time.time()
-            print("Recording Complete!")
-            print("Time taken: %.3fs" % (end - start))
-            tag.accelerometer.disable()
-            btn = 0
-            # tag.disconnect()
-            # print(accelData_list)
-            client = setup(URL)
-            send_data(client, [accelData_list])
-            client.loop_stop()
-            client.disconnect()
-            print("waiting for btn press")
+        try:
+            tag.waitForNotifications(5)
+            if btn==right_btn:
+                print("btn pressed")
+                tag.accelerometer.enable()
+                accelData_list = []
+                time.sleep(1)
+                print("Start!!")
+                time.sleep(1)
+                start = time.time()
+                for i in tqdm(range(No_of_samples*50),desc="Recording..."):
+                    accelData = tag.accelerometer.read()
+                    accelData_list.append(accelData)
+                end = time.time()
+                print("Recording Complete!")
+                print("Time taken: %.3fs" % (end - start))
+                tag.accelerometer.disable()
+                btn = 0
+                # tag.disconnect()
+                # print(accelData_list)
+                client = setup(URL)
+                send_data(client, [accelData_list])
+                client.loop_stop()
+                client.disconnect()
+                print("waiting for btn press")
+        except BTLEDisconnectError as e:
+            print("BLE disconnect error, reforming peripheral!!")
+            time.sleep(0.5)
+            tag = SensorTag(my_sensor)
+            tag.keypress.enable()
+            tag.setDelegate(KeypressDelegate())
 
 if __name__ == "__main__":
     main()
