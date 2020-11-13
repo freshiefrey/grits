@@ -227,13 +227,8 @@ def main():
     Jeffrey = 'f0:f8:f2:86:bb:83'
 
     #PARAMS
-<<<<<<< HEAD
-    my_sensor = Jeffrey
-    No_of_samples = 2
-=======
     my_sensor = Justin
     No_of_samples = 2 ## currently for window size of 100, 1 sample = 50Hz
->>>>>>> 1741c04d8200d54926f96a9f07725bf219200966
     global btn
     right_btn = 1
     # left_btn = 2

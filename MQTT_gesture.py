@@ -14,6 +14,7 @@ def on_connect(client, userdata, flags, rc):
 	client.subscribe(GESTURE)
 
 def on_message(client, userdata, msg):
+	print("Prediction JSON: " + msg.payload)
 	result = json.loads(msg.payload)
 	print("Prediction: " + result)
 
