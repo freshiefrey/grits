@@ -137,6 +137,20 @@ class KeypressSensor(SensorBase):
     def disable(self):
         self.char_descr.write(struct.pack('<bb', 0x00, 0x00), True)
 
+class BatterySensor(SensorBase):
+    svcUUID  = UUID("0000180f-0000-1000-8000-00805f9b34fb")
+    dataUUID = UUID("00002a19-0000-1000-8000-00805f9b34fb")
+    ctrlUUID = None
+    sensorOn = None
+
+    def __init__(self, periph):
+       SensorBase.__init__(self, periph)
+
+    def read(self):
+        '''Returns the battery level in percent'''
+        val = ord(self.data.read())
+        return val
+
 class SensorTag(Peripheral):
     def __init__(self,addr,version=AUTODETECT):
         Peripheral.__init__(self,addr)
@@ -144,6 +158,7 @@ class SensorTag(Peripheral):
         self.accelerometer = AccelerometerSensorMPU9250(self._mpu9250)
         self.humidity = HumiditySensorHDC1000(self)
         self.keypress = KeypressSensor(self)
+        self.battery = BatterySensor(self)
 
 class KeypressDelegate(DefaultDelegate):
     BUTTON_L = 0x02
@@ -227,7 +242,7 @@ def main():
     Jeffrey = 'f0:f8:f2:86:bb:83'
 
     #PARAMS
-    my_sensor = Justin
+    my_sensor = Mervin
     No_of_samples = 2 ## currently for window size of 100, 1 sample = 50Hz
     global btn
     right_btn = 1
@@ -238,6 +253,7 @@ def main():
     print("Connected to SensorTag", my_sensor)
     tag.keypress.enable()
     tag.setDelegate(KeypressDelegate())
+    print("waiting for btn press")
     while(1):
         try:
             tag.waitForNotifications(5)
@@ -263,13 +279,19 @@ def main():
                 send_data(client, [accelData_list])
                 client.loop_stop()
                 client.disconnect()
+
+                tag.battery.enable()
+                print("Battery: ", tag.battery.read())
+                tag.battery.disable()
                 print("waiting for btn press")
-        except BTLEDisconnectError as e:
+        except:
             print("BLE disconnect error, reforming peripheral!!")
             time.sleep(0.5)
             tag = SensorTag(my_sensor)
+            print("Re-connected to SensorTag", my_sensor)
             tag.keypress.enable()
             tag.setDelegate(KeypressDelegate())
+            print("waiting for btn press")
 
 if __name__ == "__main__":
     main()
