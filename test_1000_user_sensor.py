@@ -253,37 +253,43 @@ def main():
     print("Connected to SensorTag", my_sensor)
     tag.keypress.enable()
     tag.setDelegate(KeypressDelegate())
-    print("Waiting for btn press")
+    print("waiting for btn press")
+    tag.battery.enable()
+    print("Battery: ", tag.battery.read())
+    tag.battery.disable()
     while(1):
         try:
             tag.waitForNotifications(5)
             if btn==right_btn:
-                print("Btn pressed")
-                print("Ready")
-                tag.accelerometer.enable()
-                accelData_list = []
-                time.sleep(1)
-                print("Start!!")
-                start = time.time()
-                for i in tqdm(range(No_of_samples*50),desc="Recording..."):
-                    accelData = tag.accelerometer.read()
-                    accelData_list.append(accelData)
-                end = time.time()
-                print("Recording Complete!")
-                print("Time taken: %.3fs" % (end - start))
-                tag.accelerometer.disable()
-                btn = 0
-                
-                # print(accelData_list)
+                print("btn pressed")
+                for k in tqdm(range(108)):
+                    for j in tqdm(range(100)):
+                        print("Ready")
+                        tag.accelerometer.enable()
+                        accelData_list = []
+                        # time.sleep(1)
+                        print("Start!!")
+                        start = time.time()
+                        for i in tqdm(range(No_of_samples*50),desc="Recording..."):
+                            accelData = tag.accelerometer.read()
+                            accelData_list.append(accelData)
+                        end = time.time()
+                        print("Recording Complete!")
+                        print("Time taken: %.3fs" % (end - start))
+                        tag.accelerometer.disable()
+                    btn = 0
+                    
+                    # tag.disconnect()
+                    # print(accelData_list)
 
-                client = setup(URL)
-                send_data(client, [accelData_list])
-                client.loop_stop()
-                client.disconnect()
+                    # client = setup(URL)
+                    # send_data(client, [accelData_list])
+                    # client.loop_stop()
+                    # client.disconnect()
 
-                tag.battery.enable()
-                print("Battery: ", tag.battery.read())
-                tag.battery.disable()
+                    tag.battery.enable()
+                    print("Battery: ", tag.battery.read())
+                    tag.battery.disable()
                 print("waiting for btn press")
         except:
             print("BLE disconnect error, reforming peripheral!!")
@@ -292,7 +298,7 @@ def main():
             print("Re-connected to SensorTag", my_sensor)
             tag.keypress.enable()
             tag.setDelegate(KeypressDelegate())
-            print("Waiting for btn press")
+            print("waiting for btn press")
 
 if __name__ == "__main__":
     main()
