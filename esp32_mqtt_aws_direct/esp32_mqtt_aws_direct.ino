@@ -23,11 +23,12 @@ int motor1Pin1 = 27;
 int motor1Pin2 = 26;
 int motor2Pin1 = 33;
 int motor2Pin2 = 32;
-//int led1 = 35;
+int led1 = 14;
 
-//int enable1Pin = 14;
+//int enable1Pin = 15;
 int mtr_ctrl_stat = 0;
 int led_ctrl_stat = 0;
+int led_prev_stat = 0;
 
 void setup_wifi() {
   delay(10);
@@ -80,7 +81,8 @@ void callback(char* topic, byte *payload, unsigned int length) {
   if (s == "\"Pushback\"") {
     mtr_ctrl_stat = 1;
   }
-  if (s == "\"Buddha Clap\""){
+  if (s == "\"Buddha clap\""){
+    Serial.println("Buddha clap detected!");
     led_ctrl_stat = !led_ctrl_stat;
   }
 }
@@ -98,15 +100,16 @@ void motor_ctrl() {
   Serial.println("motor stopped");
 }
 
-//void led_on() {
-//  Serial.println("turning on led");
-//  digitalWrite(led1, HIGH);
-//}
-//
-//void led_off() {
-//  Serial.println("turning off led");
-//  digitalWrite(led1, LOW);
-//}
+void led_ctrl() {
+  Serial.println("toggle led");
+  led_prev_stat = led_ctrl_stat;
+  if (led_ctrl_stat == 1){
+    digitalWrite(led1, HIGH);
+  }
+  else{
+    digitalWrite(led1, LOW);
+  }
+}
 
 void setup() {
   //motor pin setup
@@ -115,7 +118,7 @@ void setup() {
   pinMode(motor2Pin1, OUTPUT);
   pinMode(motor2Pin2, OUTPUT);
   
-//  pinMode(led1, OUTPUT);
+  pinMode(led1, OUTPUT);
 
   Serial.begin(115200);
   Serial.setTimeout(500);// Set time out for
@@ -131,5 +134,8 @@ void loop() {
   if (mtr_ctrl_stat == 1) {
     mtr_ctrl_stat = 0;
     motor_ctrl();
+  }
+  while (led_ctrl_stat != led_prev_stat){
+    led_ctrl();
   }
 }
