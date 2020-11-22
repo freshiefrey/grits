@@ -1,4 +1,4 @@
-# grits
+# GRITS
 Gesture Recognition Integrated System
 
 ## Current best: [W = 100, overlap = 50]
@@ -6,10 +6,7 @@ Gesture Recognition Integrated System
 - Test_acc = 0.96762
 
 ## TODO:
-- Check if MQTT brokers work correctly, if model predicts correctly, and time taken for result to return.
-- Setup Cloud server to run paho-MQTT and above brokers with model.
-- Test full chain
-
+Nothing, project completed!
 
 ## Get Started Guide:
 
@@ -28,7 +25,6 @@ pip3 install requirements.txt
 python3 lstm.py
 ```
 This extracts the process data and trains the model
-
 
 ## Processed data:
 - ready_data folder 

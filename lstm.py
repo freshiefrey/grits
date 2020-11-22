@@ -130,34 +130,16 @@ def evaluate_lstm(x_train, y_train, x_test, y_test, dropout):
     verbose, epochs, batch_size = 1, 20, 64
     # timesteps = window size, #n_features = 6, n_outputs =
     n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
-
+    ##LSTM model structure
     model = Sequential()
     model.add(LSTM(100, input_shape=(n_timesteps, n_features), dropout=dropout))
-    # model.add(LSTM(100, return_sequences=True, input_shape=(n_timesteps, n_features), dropout=dropout))
-    # model.add(LSTM(10, return_sequences=True))
-    # model.add(LSTM(64, return_sequences=True))
-    # model.add(LSTM(32, return_sequences=True))
-    # model.add(LSTM(100, dropout=dropout))
-
-    ## Uncomment below and comment out lstm to use Convolution LSTM
-    # n_steps, n_length = 4, 25
-    # x_train = x_train.reshape((x_train.shape[0], n_steps, 1, n_length, n_features))
-    # x_test = x_test.reshape((x_test.shape[0], n_steps, 1, n_length, n_features))
-    # model.add(ConvLSTM2D(filters=32, kernel_size=(1, 3), activation='relu',
-                         # input_shape=(n_steps, 1, n_length, n_features)))
     model.add(Dropout(dropout))
-    # model.add(Flatten())
     model.add(Dense(100, activation='relu'))
-    # model.add(Dropout(0.3))
-    # model.add(Dense(25, activation='relu'))
     model.add(Dense(n_outputs, activation='softmax'))
     opt = Adam(lr=LR)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy', tf.keras.metrics.CategoricalAccuracy()])
-    # kb.set_value(model.optimizer.learning_rate, LR)
-    # fit network
+
     model.summary()
-    # tf.keras.metrics.CategoricalAccuracy()
-    # model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose)
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=verbose,
                         validation_data=(x_test, y_test),  shuffle=True)
     ##plot
