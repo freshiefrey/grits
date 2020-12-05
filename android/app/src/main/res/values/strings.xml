@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GRITS</string>
+    <string name="login">Login</string>
+    <string name="userId">User ID</string>
+    <string name="password">Password</string>
+    <string name="next">Next</string>
+    <string name="exit">Exit</string>
+    <string name="read">Read</string>
+    <string name="tempPlaceholder">36.7°C</string>
+    <string name="humidPlaceholder">68.2RH</string>
+
+    <string name = "Unknown">Unknown</string>
+    <string name = "Sunny">Sunny</string>
+    <string name = "GestureReg">Gesture Recognition</string>
+    <string name = "None">NONE</string>
+</resources>
