@@ -1,10 +1,8 @@
 raw_data/test.csv
-ready_data/numpy-window.txt
-ready_data/window-100-50
-ready_data
-# window.csv
+ready_data/*
 out.txt
 output.txt
+# window.csv
 # window.csv.zip
 
 # Built application files
