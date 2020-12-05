@@ -10,7 +10,7 @@ from keras.layers import Flatten
 from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.layers import ConvLSTM2D
-from keras.optimizers import Adam, SGD, RMSprop
+from keras.optimizers import Adam
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 import os
