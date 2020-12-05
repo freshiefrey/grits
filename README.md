@@ -55,11 +55,10 @@ or
 You can open the data via the text files, make sure to unroll to get original dimensions
 
 ### Train the model
-*Run lstm_csv.ipynb*
-
+*Run lstm_csv.ipynb*  
 This extracts the processed data and trains the model, saving it into lstm_models folder, showing the model performance and accuracy over the epochs. The model is then evaluated using the test data and outputs the incorrect classifications into a output.csv for further analysis by you.
 
-*Run the Test code to test any model*
+*Run the Test code to test any model*  
 You can also change the model_name to test any other model again and get the output. Run the first 3 cells to import the test data if needed.
 
 
