@@ -31,6 +31,10 @@ https://github.com/IanHarvey/bluepy
 Follow the instructions for installation of library and bluepy package. To be used on the device acting as Gateway between SensorTag and Cloud.
 
 ## 1. The project can be run using the provided files and dependencies directly on Gateway and Device:
+The provided model is able to accurately classify 4 gestures as shown in the Demo: Buddha Clap, Pushback, Swipe, Knob right. Note that the data was trained using the right hand and the Sensor mounted in a specific orientation.
+
+![Glove sensor mount](performance_figures/glove_sensor_mount.jpg)
+
 Gateway: user_sensor.py for recording SensorTag and sending data, MQTT_gesture.py for monitoring Cloud output  
 Cloud: MQTT_classifier.py, lstm_model_100_50
 
