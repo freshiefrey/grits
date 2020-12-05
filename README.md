@@ -8,7 +8,7 @@ Gesture Recognition Integrated System
 ## Project Demonstration
 Download and watch 'CS3237 Demo.mp4' to see demonstration of project or watch it here:
 
-[![Demo(https://img.youtube.com/vi/p4g2anqCnGA/maxresdefault.jpg)]](https://youtu.be/p4g2anqCnGA)
+[![Demo](https://img.youtube.com/vi/p4g2anqCnGA/maxresdefault.jpg)](https://youtu.be/p4g2anqCnGA)
 
 ## TODO:
 Nothing, project completed!
