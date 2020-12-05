@@ -30,13 +30,15 @@ pip3 install paho-mqtt
 https://github.com/IanHarvey/bluepy  
 Follow the instructions for installation of library and bluepy package. To be used on the device acting as Gateway between SensorTag and Cloud.
 
-## 1. The project can be run using the provided files and dependencies directly on Gateway and Device:
+## 1. The project can be run using the provided files and dependencies directly on Gateway and Cloud:
 The provided model is able to accurately classify 4 gestures as shown in the Demo: Buddha Clap, Pushback, Swipe, Knob right. Note that the data was trained using the right hand and the Sensor mounted in a specific orientation.
 
 ![Glove sensor mount](performance_figures/glove_sensor_mount.jpg)
 
-Gateway: user_sensor.py for recording SensorTag and sending data, MQTT_gesture.py for monitoring Cloud output  
-Cloud: MQTT_classifier.py, lstm_model_100_50
+Gateway: 1. user_sensor.py for recording SensorTag and sending data
+2. MQTT_gesture.py for monitoring Cloud output  
+Cloud: 1. MQTT_classifier.py
+2. lstm_model_100_50
 
 Change the IP address and MQTT authorization to your server in the above 3 python files, SensorTag BLE Address and my_sensor in main of user_sensor.py.
 
@@ -51,7 +53,7 @@ or
 3. Edit *window-mod.ipynb* to fit your parameters, gestures and .csv files.
 4. *Run the notebook window-mod.ipynb*
 - This processes the raw_data and generates output onto your local repo
-    - We have excluded them from our online repo as uncompressed files is too big (>600MB)
+    - We have excluded them from our online repo as uncompressed files are too big (>600MB)
 
 ### Processed data:
 - ready_data folder 
