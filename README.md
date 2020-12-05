@@ -43,11 +43,11 @@ Change the IP address and MQTT authorization to your server in the above 3 pytho
 or
 
 1. *Run sensor.py* within deprecated to record your own data, change Sensortag Address and filename.
-2. Combine your recorded data into a single .csv per gesture.
+2. Combine your recorded data into a single .csv per gesture. Put them in raw_data.
 3. Edit *window-mod.ipynb* to fit your parameters, gestures and .csv files.
 4. *Run the notebook window-mod.ipynb*
-- this processes the raw_data and generates output onto your local repo
-    - We have excluded them from our online repo as file is too big (>300MB)
+- This processes the raw_data and generates output onto your local repo
+    - We have excluded them from our online repo as uncompressed files is too big (>600MB)
 
 ### Processed data:
 - ready_data folder 
@@ -65,9 +65,9 @@ You can also change the model_name to test any other model again and get the out
 
 
 ## Extra
-- Just extra workbooks for debugging and processing steps  
-plot.ipynb: For visualising the recorded raw data  
-performance_figures: Performance difference between 100_50 and 50_25 (window_overlap) performance, and the error output of different models for analysis. Can be seen that Crank gesture causes a lot of misclassifications, hence our decision to drop it.  
-android: Code base to develop and use the app shown in the Demo.  
-esp32_mqtt_aws_direct: Code used to program the ESP32 for our Demo purposes, also as an example of how to connect ESP32 to AWS over MQTT with the correct baud rate and setup.  
-helper-code: bluepy and miscelleanous code.
+Just extra workbooks for debugging and processing steps  
+- plot.ipynb: For visualising the recorded raw data  
+- performance_figures: Performance difference between 100_50 and 50_25 (window_overlap) performance, and the error output of different models for analysis. Can be seen that Crank gesture causes a lot of misclassifications, hence our decision to drop it.  
+- android: Code base to develop and use the app shown in the Demo.  
+- esp32_mqtt_aws_direct: Code used to program the ESP32 for our Demo purposes, also as an example of how to connect ESP32 to AWS over MQTT with the correct baud rate and setup.  
+- helper-code: bluepy and miscelleanous code.
