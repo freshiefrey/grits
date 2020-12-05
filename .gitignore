@@ -3,12 +3,9 @@ window.csv
 out.txt
 output.txt
 window.csv.zip
-ready_data/*
 numpy-window.txt
-ready_data/window-100/*
-ready_data/no-overlap/*
+ready_data/*
 # lstm_model*
-# output*.csv
 
 # Built application files
 *.apk
