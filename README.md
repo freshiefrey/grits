@@ -6,7 +6,9 @@ Gesture Recognition Integrated System
 - Test_acc = 0.96762
 
 ## Project Demonstration
-Download and watch 'CS3237 Demo.mp4' to see demonstration of project.
+Download and watch 'CS3237 Demo.mp4' to see demonstration of project or watch it here:
+
+[![Demo(https://img.youtube.com/vi/p4g2anqCnGA/maxresdefault.jpg)]](https://youtu.be/p4g2anqCnGA)
 
 ## TODO:
 Nothing, project completed!
@@ -35,9 +37,10 @@ The provided model is able to accurately classify 4 gestures as shown in the Dem
 
 ![Glove sensor mount](performance_figures/glove_sensor_mount.jpg)
 
-Gateway: 1. user_sensor.py for recording SensorTag and sending data
-2. MQTT_gesture.py for monitoring Cloud output  
-Cloud: 1. MQTT_classifier.py
+Gateway: 1. user_sensor.py for recording SensorTag and sending data  
+2. MQTT_gesture.py for monitoring Cloud output
+
+Cloud: 1. MQTT_classifier.py  
 2. lstm_model_100_50
 
 Change the IP address and MQTT authorization to your server in the above 3 python files, SensorTag BLE Address and my_sensor in main of user_sensor.py.
